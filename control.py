@@ -61,15 +61,23 @@ class Control(object):
                 if self.direction_states[direction]:
                     self.game.player.move(self.directions[direction], multi)
 
+    def get_direction_from_pygame_key(self, key):
+        for direction in self.pg_directions:
+            if direction == key:
+                return self.pg_directions[direction]
+
     def world_update_direction(self, direction, pressed=False):
-        if pressed:
-            self.direction_states[direction] = True
-            self.moving += 1
-            
-        else:
-            if self.direction_states[direction]:
-                self.moving -= 1
-                self.direction_states[direction] = False
+        try:
+            if pressed:
+                self.direction_states[direction] = True
+                self.moving += 1
+                
+            else:
+                if self.direction_states[direction]:
+                    self.moving -= 1
+                    self.direction_states[direction] = False
+        except KeyError:
+            print "ERROR - Tried to world_update_direction with direction: %s" % str(direction)
 
     def world_handle_keyup_event(self, event):
         # Interaction events
@@ -78,22 +86,21 @@ class Control(object):
 
         # Directional events
         if event.key in self.pg_directions:
-            for direction in self.pg_directions:
-                if direction == event.key:
-                    self.world_update_direction(self.pg_directions[direction], pressed=False)
+            direction = self.get_direction_from_pygame_key(event.key)
+            self.world_update_direction(direction, pressed=False)
 
     def world_handle_keydown_event(self, event):
-        # Directional events
         if event.key in self.pg_directions:
-            for direction in self.pg_directions:
-                if direction == event.key:
-                    self.world_update_direction(self.pg_directions[direction], pressed=True)
+            direction = self.get_direction_from_pygame_key(event.key)
+            self.world_update_direction(direction, pressed=True)
 
     def battle_handle_event(self, event):
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_q:
-                pass
+                self.game.battle.accept()
+                
             elif event.key == pygame.K_r:
+                self.game.battle.decline()
                 self.exit_battle()
 
     def event_loop(self, state):
@@ -101,12 +108,14 @@ class Control(object):
             # Always allow quitting
             if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                 self.game.running = False
+                
             # World stuff
             if state == 'world':
                 if event.type == pygame.KEYUP:
                     self.world_handle_keyup_event(event)
                 elif event.type == pygame.KEYDOWN:
                     self.world_handle_keydown_event(event)
+                    
             # Battle stuff
             elif state == 'battle':
                 self.battle_handle_event(event)
@@ -114,6 +123,9 @@ class Control(object):
     def update_non_events(self, state):
         if state == 'world':
             self.world_handle_movement()
+        elif state == 'battle':
+            if self.game.battle.state == 'end':
+                self.exit_battle()
 
     def update_everything(self, state):
         if state != 'wait': # If the player is not allowed to input, state = 'wait'

@@ -6,16 +6,19 @@ FILE_PATH_Y = 'resources\monster2.png'
 class Monster(object):
     #
     #
-    def __init__(self, name, location):
+    def __init__(self, name, location, level=None):
         self.name = name
         self.x, self.y = location
+        if level:
+            self.level = level
+        else:
+            self.level = 5
         self.setup_defaults()
         self.setup_image()
 
     def setup_defaults(self):
-        self.level = 5
-        self.base_hp = 10
-        self.hp = 10
+        self.base_hp = self.level
+        self.hp = self.base_hp
         self.atk = 1
         self.speed = 10
 

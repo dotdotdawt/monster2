@@ -3,7 +3,7 @@ import pygame
 class Text(object):
     #
     #
-    def __init__(self, xy, text_type, location, size, color, bg_color):
+    def __init__(self, text_type, location, size, color, bg_color, xy=None):
         self.xy = xy # Determines which monster of the 2
         self.type = text_type # Determines which text type: hp, name, etc.
         self.x, self.y = location

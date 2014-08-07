@@ -39,7 +39,7 @@ class Game(object):
             self.screen.blit(self.player.image, self.player.rect)
 
         elif state == 'battle':
-            self.screen.fill(self.refresh_color)
+            self.screen.fill(self.battle_color)
             for monster in self.battle.monsters:
                 monster.update()
                 self.screen.blit(monster.image, monster.rect)
@@ -47,5 +47,4 @@ class Game(object):
                 self.battle.update_text_object(text_object)
                 self.screen.blit(text_object.image, text_object.rect)
                 
-        #pygame.display.flip()
-        pygame.display.update()
+        pygame.display.flip()
