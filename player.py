@@ -12,7 +12,7 @@ class Player(object):
 
     def __init__(self):
         self.name = 'player'
-        self.units = []
+        self.monsters = []
         self.x = 400
         self.y = 400
         self.size = (32, 32)
