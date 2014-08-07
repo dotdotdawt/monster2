@@ -1,6 +1,11 @@
+#
+
+# 3rd party imports
 import pygame
 
+# Globals
 FILE_PATH = 'resources\player.png'
+
 
 class Player(object):
 
