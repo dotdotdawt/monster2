@@ -8,8 +8,8 @@ FILE_PATH = 'resources\player.png'
 
 
 class Player(object):
-
-
+    #
+    #
     def __init__(self):
         self.name = 'player'
         self.monsters = []

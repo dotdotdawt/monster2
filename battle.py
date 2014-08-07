@@ -46,12 +46,19 @@ class Battle(object):
         self.monsters = [self.monster_x, self.monster_y]
 
     def setup_text(self):
-        self.x_name_text = text.Text('name', X_NAME_LOCATION, NAME_SIZE, NAME_COLOR, NAME_BG_COLOR, xy='x')
-        self.y_name_text = text.Text('name', Y_NAME_LOCATION, NAME_SIZE, NAME_COLOR, NAME_BG_COLOR, xy='y')
-        self.x_hp_text = text.Text('hp', X_HP_LOCATION, HP_SIZE, HP_COLOR, HP_BG_COLOR, xy='x')
-        self.y_hp_text = text.Text('hp', Y_HP_LOCATION, HP_SIZE, HP_COLOR, HP_BG_COLOR, xy='y')
-        self.message_text = text.Text('battle_message', MESSAGE_LOCATION, MESSAGE_SIZE, MESSAGE_COLOR, MESSAGE_BG_COLOR)
-        self.text_objects = [self.x_name_text, self.y_name_text, self.x_hp_text, self.y_hp_text, self.message_text]
+        self.x_name_text = text.Text(
+            'name', X_NAME_LOCATION, NAME_SIZE, NAME_COLOR, NAME_BG_COLOR, xy='x')
+        self.y_name_text = text.Text(
+            'name', Y_NAME_LOCATION, NAME_SIZE, NAME_COLOR, NAME_BG_COLOR, xy='y')
+        self.x_hp_text = text.Text(
+            'hp', X_HP_LOCATION, HP_SIZE, HP_COLOR, HP_BG_COLOR, xy='x')
+        self.y_hp_text = text.Text(
+            'hp', Y_HP_LOCATION, HP_SIZE, HP_COLOR, HP_BG_COLOR, xy='y')
+        self.message_text = text.Text(
+            'battle_message', MESSAGE_LOCATION, MESSAGE_SIZE, MESSAGE_COLOR, MESSAGE_BG_COLOR)
+        self.text_objects = [
+            self.x_name_text, self.y_name_text, self.x_hp_text, self.y_hp_text, self.message_text
+            ]
 
     def update_text_object(self, text_object):
         text_object.string = self.get_updated_string(text_object)

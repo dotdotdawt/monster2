@@ -101,7 +101,6 @@ class Control(object):
                 
             elif event.key == pygame.K_r:
                 self.game.battle.decline()
-                self.exit_battle()
 
     def event_loop(self, state):
         for event in pygame.event.get():
