@@ -16,7 +16,7 @@ class Player(object):
         self.x = 400
         self.y = 400
         self.size = (32, 32)
-        self.size_multiplier = 1.65
+        self.size_multiplier = 1.50
         self.frame_index = 0
         self.speed = 16.0
         self.image = pygame.image.load(FILE_PATH)
