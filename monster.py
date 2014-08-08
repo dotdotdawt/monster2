@@ -1,7 +1,7 @@
 import pygame
 
-FILE_PATH_X = 'resources\monster1.png'
-FILE_PATH_Y = 'resources\monster2.png'
+FILE_PATH_U = 'resources\monster1.png'
+FILE_PATH_X = 'resources\monster2.png'
 
 class Monster(object):
     #

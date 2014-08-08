@@ -1,6 +1,6 @@
 import pygame
 
-ANIMATION_THRESHOLD = 5
+ANIMATION_THRESHOLD = 3
 
 class Button(object):
     #
@@ -10,6 +10,7 @@ class Button(object):
         self.load_images(icon_path)
         self.name = name
         self.key_bindings = key_bindings
+        self.pressed = False
         self.reset()
 
     def load_images(self, icon_path):
@@ -20,32 +21,21 @@ class Button(object):
         self.disabled_image = pygame.image.load(dis_path)
 
     def reset(self):
-        self.pressed = False
         self.pressed_duration = 0
         self.image = self.normal_image
         self.rect = self.image.get_rect()
         self.rect.topleft = (self.x, self.y)
 
-    def show_as_pressed(self):
-        self.image = self.disabled_image
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (self.x, self.y)
+    def is_currently_pressed(self):
+        self.pressed = True
+        self.pressed_duration = 1            
 
     def update(self):
         if self.pressed:
-            if self.image != self.normal_image:
-                self.show_as_pressed()
-            self.pressed_duration += 1
-            if self.pressed_duration >= ANIMATION_THRESHOLD:
-                self.reset()
-"""
-    def special_case(self):
-        if self.name == 'q' and pygame.K_q in self.key_bindings:
-            self.is_q = True
-        elif self.name == 'w' and pygame.K_w in self.key_bindings:
-            self.is_w = True
-        elif self.name == 'e' and pygame.K_e in self.key_bindings:
-            self.is_e = True
-        elif self.name == 'r' and pygame.K_r in self.key_bindings:
-            self.is_r = True
-"""
+            if self.image == self.normal_image:
+                self.image = self.disabled_image
+        else:
+            if self.pressed_duration > 0:
+                self.pressed_duration += 1
+                if self.pressed_duration >= ANIMATION_THRESHOLD:
+                    self.reset()

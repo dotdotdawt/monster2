@@ -8,7 +8,14 @@ import gc
 # Local imports
 import battle
 
+# Enabling garbage collection - honestly I have no idea how it works
 gc.enable()
+
+# Global variables
+kLEFT = pygame.K_LEFT
+kRIGHT = pygame.K_RIGHT
+kUP = pygame.K_UP
+kDOWN = pygame.K_DOWN
 
 class Control(object):
     #
@@ -29,19 +36,31 @@ class Control(object):
             }
         # Pygame's names for each direction
         self.pg_directions = {
-            pygame.K_LEFT:'left',
-            pygame.K_RIGHT:'right',
-            pygame.K_UP: 'up',
-            pygame.K_DOWN: 'down'
+            kLEFT:'left',
+            kRIGHT:'right',
+            kUP: 'up',
+            kDOWN: 'down'
             }
         self.reset_direction_states()
 
     def reset_direction_states(self):
-        # Do world_movement by polling
         self.direction_states = {
             'up': False, 'down': False, 'left': False, 'right': False
             }
+    def get_direction_from_pygame_key(self, key):
+        for direction in self.pg_directions:
+            if direction == key:
+                return self.pg_directions[direction]
 
+    def handle_non_state_event(self, event):
+        if event.type == pygame.KEYUP:
+            if event.key in self.game.buttons:
+                self.game.buttons[event.key].pressed = False # One of the QWER btns
+                
+        if event.type == pygame.KEYDOWN:
+            if event.key in self.game.buttons:
+                self.game.buttons[event.key].is_currently_pressed() # One of the QWER btns
+    
     def world_handle_movement(self):
         total = (self.direction_states['left'] + self.direction_states['right'] +
                  self.direction_states['up'] + self.direction_states['down'])
@@ -63,11 +82,6 @@ class Control(object):
             for direction in self.direction_states:
                 if self.direction_states[direction]:
                     self.game.player.move(self.directions[direction], multi)
-
-    def get_direction_from_pygame_key(self, key):
-        for direction in self.pg_directions:
-            if direction == key:
-                return self.pg_directions[direction]
 
     def world_update_direction(self, direction, pressed=False):
         try:
@@ -121,12 +135,17 @@ class Control(object):
             elif state == 'battle':
                 self.battle_handle_event(event)
 
+            # Non state
+            self.handle_non_state_event(event)
+
     def update_non_events(self, state):
         if state == 'world':
             self.world_handle_movement()
         elif state == 'battle':
             if self.game.battle.state == 'end':
                 self.exit_battle()
+        for btn in self.game.buttons:
+            self.game.buttons[btn].update()
 
     def update(self, state):
         if state != 'wait': # If the player is not allowed to input, state = 'wait'
