@@ -3,9 +3,12 @@
 # 3rd party imports
 import sys
 import pygame
+import gc
 
 # Local imports
 import battle
+
+gc.enable()
 
 class Control(object):
     #
@@ -71,7 +74,6 @@ class Control(object):
             if pressed:
                 self.direction_states[direction] = True
                 self.moving += 1
-                
             else:
                 if self.direction_states[direction]:
                     self.moving -= 1
@@ -126,7 +128,7 @@ class Control(object):
             if self.game.battle.state == 'end':
                 self.exit_battle()
 
-    def update_everything(self, state):
+    def update(self, state):
         if state != 'wait': # If the player is not allowed to input, state = 'wait'
             self.event_loop(state)
             self.update_non_events(state)
@@ -141,7 +143,7 @@ class Control(object):
 
     def main_loop(self):
         while self.game.running:
-            self.update_everything(self.state)
+            self.update(self.state)
             self.game.update_display(self.state)
             self.game.fps_clock.tick(self.game.fps)
 

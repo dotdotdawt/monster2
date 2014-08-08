@@ -41,8 +41,8 @@ class Battle(object):
         self.setup_text()
 
     def setup_monsters(self):
-        self.monster_x = monster.Monster('George', X_SPRITE_LOCATION)
-        self.monster_y = monster.Monster('Bob', Y_SPRITE_LOCATION, level=11)
+        self.monster_x = monster.Monster('George', X_SPRITE_LOCATION, level=14)
+        self.monster_y = monster.Monster('Bob', Y_SPRITE_LOCATION, level=4)
         self.monsters = [self.monster_x, self.monster_y]
 
     def setup_text(self):
@@ -81,20 +81,45 @@ class Battle(object):
                 return ' %i/%i ' % (self.monster_y.hp, self.monster_y.base_hp)
         # Battle messages to user
         elif text_object.type == 'battle_message':
+            
             if self.state == 'init':
-                return 'The battle has begun. Press Q to continue.'
-            elif self.state == 'x_action':
-                return 'it is %s\'s turn, please give an action.' % self.monster_x.name
-            elif self.state == 'x_attacking':
-                return '%s dealt 1 damage. Press Q to continue.' % self.monster_x.name
+                return 'Encountered a wild %s!' % self.monster_y.name
+            
+            elif self.state == 'battle_menu':
+                return 'Please choose your action using QWER keys.'
+            
+            elif self.state == 'fight_menu':
+                return 'Please choose your attack using QWER keys.'
+
+            elif self.state == 'first_monster_attacks':
+                return '%s used %s and dealt %i damage to %s' % (self.monster_x.name, "Claw", 2, self.monster_y.name)
+
+            elif self.state == 'second_monster_attacks':
+                return '%s used %s and dealt %i damage to %s' % (self.monster_y.name, "Evil Claw", 1, self.monster_x.name)
+
+            elif self.state == 'change_hp_and_check':
+                return 'Checking HP'
+
+            elif self.state == 'second_monster_dies':
+                return '%s has been obliterated by %s!' % (self.monster_y.name, self.monster_x.name)
+
+            elif self.state == 'first_monster_dies':
+                return '%s has been obliterated by %s!' % (self.monster_x.name, self.monster_y.name)
+
+            elif self.state == 'victory':
+                return 'You have defeated %s and earned %i gold!' % (self.monster_y.name, 20)
+
+            elif self.state == 'game_over':
+                return 'Annihilated...'
+             
             else:
                 return 'Not completed'
 
     def deal_damage(self, user, target):
-        target.hp -= 1
+        target.hp -= 2
 
     def decide_turn(self):
-        self.next_turn = 'Bob'
+        return 'first_monster_attacks'
 
     def is_battle_over(self):
         if self.monster_y.hp <= 0.5:
@@ -102,17 +127,50 @@ class Battle(object):
         else:
             return False
 
+    def is_monster_dead(self, monster):
+        if monster.hp <= 0.5:
+            return True
+        else:
+            return False
+
     def accept(self):
         if self.state == 'init':
-            self.state = 'x_action'
-        elif self.state == 'x_action':
-            self.state = 'x_attacking'
+            self.state = 'battle_menu'
+
+        elif self.state == 'battle_menu':
+            self.state = 'fight_menu'
+
+        elif self.state == 'fight_menu':
+            self.state = 'decide_turn'
+
+        elif self.state == 'decide_turn':
+            self.state = self.decide_turn()
+
+        elif self.state == 'first_monster_attacks':
             self.deal_damage(self.monster_x, self.monster_y)
-        elif self.state == 'x_attacking':
-            if self.is_battle_over():
-                self.state = 'end'
+            monster_was_killed = self.is_monster_dead(self.monster_y)
+            if monster_was_killed:
+                self.state = 'second_monster_dies'
             else:
-                self.state = 'x_action'
+                self.state = 'second_monster_attacks'
+
+        elif self.state == 'second_monster_attacks':
+            self.deal_damage(self.monster_y, self.monster_x)
+            monster_was_killed = self.is_monster_dead(self.monster_x)
+            if monster_was_killed:
+                self.state = 'first_monster_dies'
+            else:
+                self.state = 'battle_menu'
+
+        elif self.state == 'second_monster_dies':
+            self.state = 'victory'
+
+        elif self.state == 'first_monster_dies':
+            self.state = 'game_over'
+
+        elif self.state == 'victory' or self.state == 'game_over':
+            self.state = 'end'
+
 
     def decline(self):
         self.state = 'end'
