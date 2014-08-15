@@ -39,7 +39,7 @@ class Game(object):
     def setup_defaults(self):
         self.screen_size = SCREEN_SIZE
         self.refresh_color = (100, 100, 100)
-        self.battle_color = (200, 100, 100)
+        self.battle_color = (200, 50, 50)
         self.fps = FPS
         self.states_with_ui = STATES_THAT_ALLOW_UI
         self.running = True

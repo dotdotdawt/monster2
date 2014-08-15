@@ -24,7 +24,6 @@ class Text(object):
         self.font = pygame.font.SysFont(self.font_name, self.size)
         self.image = self.font.render(self.string, self.anti_aliasing, self.color, self.bg_color)
         self.rect = self.image.get_rect()
-        print 'Created Text() object of type: %s ' % text_type
         self.update()
 
     def update(self):
