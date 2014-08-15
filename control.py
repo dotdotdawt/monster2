@@ -155,7 +155,7 @@ class Control(object):
     def start_battle(self):
         self.state = 'battle'
         self.reset_direction_states()
-        self.game.battle = battle.Battle()
+        self.game.battle = battle.Battle(self.game.player.monsters_in_party)
 
     def exit_battle(self):
         self.state = 'world'

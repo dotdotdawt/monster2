@@ -6,6 +6,7 @@ import pygame
 # Local imports
 import player
 import button
+import sidemenu
 
 # Display globals
 SCREEN_SIZE = (800, 600)
@@ -32,6 +33,7 @@ class Game(object):
         self.setup_defaults()
         self.setup_pygame()
         self.setup_player()
+        self.setup_sidemenu()
         self.setup_qwer()
 
     def setup_defaults(self):
@@ -59,24 +61,47 @@ class Game(object):
             pygame.K_e: button.Button('e', E_ICON_PATH, E_LOCATION, pygame.K_e),
             pygame.K_r: button.Button('r', R_ICON_PATH, R_LOCATION, pygame.K_r)
             }
+        
+    def setup_sidemenu(self):
+        self.sidemenu = sidemenu.SideMenu()
 
-    def update_display(self, state):
+    def show_all_objects_in_list(self, objects, is_dictionary=False):
+        if is_dictionary:
+            for key in objects:
+                objects[key].update()
+                self.screen.blit(objects[key].image, objects[key].rect)
+        else:
+            for obj in objects:
+                obj.update()
+                self.screen.blit(obj.image, obj.rect)
+
+    def update_display(self, state):           
         if state == 'world':
             self.screen.fill(self.refresh_color)
             self.player.update()
             self.screen.blit(self.player.image, self.player.rect)
-
+            
         elif state == 'battle':
             self.screen.fill(self.battle_color)
-            for monster in self.battle.monsters:
-                monster.update()
-                self.screen.blit(monster.image, monster.rect)
+            
+            # Updates
             for text_object in self.battle.text_objects:
-                self.battle.update_text_object(text_object)
-                self.screen.blit(text_object.image, text_object.rect)
+                self.battle.update_text(text_object)
+
+            # Show everything from each list
+            self.show_all_objects_in_list(self.battle.monsters)
+            self.show_all_objects_in_list(self.battle.text_objects)
 
         if state in self.states_with_ui:
-            for button in self.buttons:
-                self.screen.blit(self.buttons[button].image, self.buttons[button].rect)
+            # Wipe with a background
+            self.screen.blit(self.sidemenu.bg_img, self.sidemenu.bg_rect)
+            
+            # Sidemenu
+            monster_display_in_sidemenu = self.player.get_active_monster()
+            self.sidemenu.update(monster_display_in_sidemenu)
+            #self.screen.blit(self.sidemenu.bg_image, self.sidemenu.bg_rect) # sidemenu bg
+
+            self.show_all_objects_in_list(self.sidemenu.text_objects, is_dictionary=True)
+            self.show_all_objects_in_list(self.buttons, is_dictionary=True)
                 
         pygame.display.flip()
