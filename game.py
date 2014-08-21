@@ -49,6 +49,7 @@ class Game(object):
         self.fps = FPS
         self.states_with_ui = STATES_THAT_ALLOW_UI
         self.running = True
+        self.clickable_things = []
 
     def setup_pygame(self):
         pygame.init()
@@ -70,8 +71,15 @@ class Game(object):
             }
         
     def setup_sidemenu(self):
-        self.sidemenu = sidemenu.SideMenu()
+        default_monster = self.player.get_active_monster()
+        self.clickable_things.append(default_monster)
+        self.sidemenu = sidemenu.SideMenu(default_monster)
 
+    def begin_battle(self):
+        del self.clickable_things
+        self.clickable_things = self.battle.setup_new_battle_and_get_monsters(
+            self.player.monsters_in_party)
+        
     def show_all_objects_in_list(self, objects, is_dictionary=False):
         # This takes either a dictionary or a list and updates each object,
         # then displays them on the screen
@@ -95,7 +103,7 @@ class Game(object):
         # function, so be really nice to it.
         
         # Update non-state objects
-        self.sidemenu.update(self.player.get_active_monster())
+        self.sidemenu.update()
 
         # Update world objects
         if state == 'world':

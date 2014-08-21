@@ -56,6 +56,8 @@ class Monster(object):
 
     def setup_image(self):
         self.image = pygame.image.load(FILE_PATH_X)
+        self.size_x = 64
+        self.size_y = 64
         self.rect = self.image.get_rect()
         self.update()
 

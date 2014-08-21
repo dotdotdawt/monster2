@@ -38,19 +38,39 @@ class Control(object):
         self.direction_states = {
             kUP: False, kDOWN: False, kLEFT: False, kRIGHT: False }
 
+    def check_if_clicked(self, target):
+        click_x, click_y = pygame.mouse.get_pos()
+        if click_x >= target.x and click_x <= (target.x + target.size_x):
+            if click_y >= target.y and click_y <= (target.y + target.size_y):
+                return True
+            
+        return False
+
     ## BATTLE ##
     def start_battle(self):
         self.state = 'battle'
-        self.game.battle.setup_new_battle(self.game.player.monsters_in_party)
         self.reset_direction_states() # Prevents movement bugs
+        self.game.begin_battle()
 
     def exit_battle(self):
         self.state = 'world'
 
     def battle_handle_event(self, event):
+        # MOUSE CLICKS #
+        if event.type == pygame.MOUSEBUTTONUP:
+            for thing in self.game.clickable_things:
+                if self.check_if_clicked(thing):
+                    self.game.sidemenu.update_selection(thing)
+        
         # KEY UPS #
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_q:
+                
+                print '| Battle state = %s | Output = %s |' % (
+                           self.game.battle.state,
+                           self.game.battle.get_updated_battle_message(self.game.battle.state)
+                           )
+                    
                 self.game.battle.accept()
                 
             elif event.key == pygame.K_r:

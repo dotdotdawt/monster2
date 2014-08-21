@@ -76,28 +76,23 @@ class Battle(object):
             ]
 
     def update_text(self, text_object):
-        # Only pertains to a text_object
-        text_object.string = self.get_updated_string(text_object)
-        text_object.update()
-
-    def get_updated_string(self, text_object):
         # Name strings
         if text_object.type == 'name':
             if text_object.xy == 'x':
-                return ' %s ' % self.monster_x.name
+                text_object.string = ' %s ' % self.monster_x.name
             elif text_object.xy == 'y':
-                return ' %s ' % self.monster_y.name
+                text_object.string = ' %s ' % self.monster_y.name
             
         # HP strings
         elif text_object.type == 'hp':
             if text_object.xy == 'x':
-                return  ' %i/%i ' % (self.monster_x.hp, self.monster_x.base_hp)
+                text_object.string =  ' %i/%i ' % (self.monster_x.hp, self.monster_x.base_hp)
             elif text_object.xy == 'y':
-                return ' %i/%i ' % (self.monster_y.hp, self.monster_y.base_hp)
+                text_object.string = ' %i/%i ' % (self.monster_y.hp, self.monster_y.base_hp)
             
         # Battle messages
         elif text_object.type == 'battle_message':
-            return self.get_updated_battle_message(self.state)
+            text_object.string = self.get_updated_battle_message(self.state)
 
     def get_updated_battle_message(self, state):
         # Seperated this out into it's own function for ease of use. This will probably
@@ -169,7 +164,6 @@ class Battle(object):
             return False
 
     def accept(self):
-        #print 'battle.state = %s' % self.state # Debug the state here
         # Press Q to stop the text barrage
         if self.state == 'init':
             self.state = 'battle_menu'
@@ -215,11 +209,13 @@ class Battle(object):
     def decline(self):
         self.state = 'end'
 
-    def setup_new_battle(self, monsters_in_player_party):
+    def setup_new_battle_and_get_monsters(self, monsters_in_player_party):
         self.state = 'init'
         # Give us some dummy monsters for now so we can beat the shit out of them
         self.monsters_in_player_party = monsters_in_player_party
         self.monster_x = self.monsters_in_player_party[0]
         self.monster_y = monster.Monster('Bob', 'npc', level=4)
         self.monsters = [self.monster_x, self.monster_y]
+
+        return self.monsters
 
