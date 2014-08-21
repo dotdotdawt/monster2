@@ -1,8 +1,9 @@
 import pygame
 
 import text
+import settings
 
-SCREEN_SIZE = (800, 600) # MAKE SURE THIS IS RIGHT
+SCREEN_SIZE = settings.SCREEN_SIZE
 RIGHT_SIDE_OFFSET = 175
 TEXT_EDGE_BUFFER = 8 # Distance between where the menu background starts and text starts
 MENU_BOTTOM_BUFFER = 300 # How far from bottom of screen menu hangs
