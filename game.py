@@ -54,6 +54,7 @@ class Game(object):
         pygame.init()
         pygame.display.init()
         pygame.font.init()
+        pygame.mixer.init()
         self.screen = pygame.display.set_mode(self.screen_size)
         self.fps_clock = pygame.time.Clock()
 
@@ -116,7 +117,6 @@ class Game(object):
             self.show_all_objects_in_list(self.battle.text_objects)
 
         if state in self.states_with_ui:
-            # self.sidemenu, self.sidemenu.text_objects, self.buttons
             self.screen.blit(self.sidemenu.bg_img, self.sidemenu.bg_rect)           
             self.show_all_objects_in_list(self.sidemenu.text_objects, is_dictionary=True)
             self.show_all_objects_in_list(self.buttons, is_dictionary=True)

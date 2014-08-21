@@ -14,7 +14,7 @@ X_LOCATION_INCREASE = 50
 Y_LOCATION_INCREASE = 16
 X_COLUMN = 0
 Y_ROW = 0
-TEXT_TYPES = ['name', 'level', 'curr_xp', 'next_xp', 'hp', 'atk', 'def', 'speed']
+TEXT_TYPES = ['name', 'level', 'curr_xp', 'next_xp', 'hp', 'ph_atk', 'ph_def', 'speed']
 IMPORTANT_TYPES = ['name']
 LOCATIONS = {}
 
@@ -35,7 +35,7 @@ TEXT_SIZE_IMPORTANT = 24
 TEXT_SIZE_NORMAL = 16
 TEXT_COLOR_IMPORTANT = (180, 60, 60)
 TEXT_COLOR_NORMAL = (10, 80, 200)
-TEXT_BG = (60, 130, 160) # Alpha
+TEXT_BG = (60, 130, 160)
 
 class SideMenu(object):
     #
@@ -74,8 +74,8 @@ class SideMenu(object):
         self.text_objects['level'].string = ' Level: %i ' % monster.level
         self.text_objects['next_xp'].string = ' XP to next: %i ' % (monster.level-1)
         self.text_objects['curr_xp'].string = ' Current XP: %i ' % 2003
-        self.text_objects['atk'].string = ' Attack: %i ' % monster.atk
-        self.text_objects['def'].string = ' Defense: %i ' % 5
+        self.text_objects['ph_atk'].string = ' Attack: %i ' % monster.ph_atk
+        self.text_objects['ph_def'].string = ' Defense: %i ' % monster.ph_def
         self.text_objects['speed'].string = ' Speed: %i ' % monster.speed
 
     def update(self, monster):

@@ -51,21 +51,16 @@ Y_SPRITE_LOCATION = (Y_ANCHOR[0]+SPRITE_OFFSET[0], Y_ANCHOR[1]+SPRITE_OFFSET[1])
 class Battle(object):
     # Battle holds all references to text surfaces, HP/name displays, and each monster
     # involved in a fight. Battle.state is in charge of everything here.
-    def __init__(self, monsters_in_player_party):
-        self.state = 'init'
+    def __init__(self):
+        self.state = 'off'
+        # Sets the X points that are prescribed in battle globally for all monsters
         monster.set_sprite_anchor_points(X_SPRITE_LOCATION, Y_SPRITE_LOCATION)
-        self.monsters_in_player_party = monsters_in_player_party
-        self.setup_monsters()
         self.setup_text()
-
-    def setup_monsters(self):
-        # Give us some dummy monsters for now so we can beat the shit out of them
-        self.monster_x = self.monsters_in_player_party[0]
-        self.monster_y = monster.Monster('Bob', 'npc', level=4)
-        self.monsters = [self.monster_x, self.monster_y]
 
     def setup_text(self):
         # Put any constantly updated text fields for the battle here
+        self.recent_move = 'Empty'
+        self.recent_damage = 0
         self.x_name_text = text.Text(
             'name', X_NAME_LOCATION, NAME_SIZE, NAME_COLOR, NAME_BG_COLOR, xy='x')
         self.y_name_text = text.Text(
@@ -119,11 +114,15 @@ class Battle(object):
 
         elif self.state == 'first_monster_attacks':
             return '%s used %s and dealt %i damage to %s' % (
-                self.monster_x.name, "Claw", 2, self.monster_y.name)
+                self.monster_x.name, self.recent_move,
+                self.recent_damage, self.monster_y.name
+                )
 
         elif self.state == 'second_monster_attacks':
             return '%s used %s and dealt %i damage to %s' % (
-                self.monster_y.name, "Evil Claw", 1, self.monster_x.name)
+                self.monster_y.name, self.recent_move,
+                self.recent_damage, self.monster_x.name
+                )
 
         elif self.state == 'change_hp_and_check':
             return 'Checking HP'
@@ -141,9 +140,24 @@ class Battle(object):
             return 'Annihilated...'
         else:
             return 'Not completed'
-            
-    def deal_damage(self, user, target, damage):
-        target.hp -= damage # This is very basic for now
+
+    def apply_move(self, move_loc):
+        #attacking = self.get_attacking_monster()
+        attacking = self.monster_x
+        if self.monster_x == attacking:
+            defending = self.monster_y
+        else:
+            defending = self.monster_x
+
+        for move in attacking.moves:
+            if attacking.moves[move].qwer_loc == move_loc:
+                move_used = attacking.moves[move]
+                damage = attacking.get_calculated_damage(defending, move_used)
+        
+        defending.hp -= damage # Actual application of damage
+        self.recent_damage = damage
+        self.recent_move = move_used.name
+        self.recent_death_alert = self.is_monster_dead(defending)
 
     def decide_turn(self):
         return 'first_monster_attacks'
@@ -166,28 +180,32 @@ class Battle(object):
 
         # Monster X attacks monster Y first
         elif self.state == 'first_monster_attacks':
-            self.deal_damage(self.monster_x, self.monster_y, 2)
-            monster_was_killed = self.is_monster_dead(self.monster_y)
-            if monster_was_killed:
+            self.apply_move('q')
+            self.monster_x.sounds['move1'].play()
+            
+            if self.recent_death_alert:
                 self.state = 'second_monster_dies'
             else:
                 self.state = 'second_monster_attacks'
 
         # Monster Y attacks monster X second
         elif self.state == 'second_monster_attacks':
-            self.deal_damage(self.monster_y, self.monster_x, 1)
-            monster_was_killed = self.is_monster_dead(self.monster_x)
-            if monster_was_killed:
+            self.apply_move('w')
+            self.monster_y.sounds['move2'].play()
+            
+            if self.recent_death_alert:
                 self.state = 'first_monster_dies'
             else:
                 self.state = 'battle_menu'
 
         # Monster Y dies and user wins
         elif self.state == 'second_monster_dies':
+            self.monster_y.sounds['death'].play()
             self.state = 'victory'
 
         # User loses game
         elif self.state == 'first_monster_dies':
+            self.monster_x.sounds['death'].play()
             self.state = 'game_over'
 
         # Just exit in any case
@@ -196,3 +214,12 @@ class Battle(object):
 
     def decline(self):
         self.state = 'end'
+
+    def setup_new_battle(self, monsters_in_player_party):
+        self.state = 'init'
+        # Give us some dummy monsters for now so we can beat the shit out of them
+        self.monsters_in_player_party = monsters_in_player_party
+        self.monster_x = self.monsters_in_player_party[0]
+        self.monster_y = monster.Monster('Bob', 'npc', level=4)
+        self.monsters = [self.monster_x, self.monster_y]
+

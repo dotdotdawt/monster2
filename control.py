@@ -23,6 +23,7 @@ class Control(object):
     def __init__(self, game):
         self.game = game
         self.state = 'world' # For now, just so we can test
+        self.game.battle = battle.Battle()
         self.setup_defaults()
         self.main_loop()
 
@@ -40,8 +41,8 @@ class Control(object):
     ## BATTLE ##
     def start_battle(self):
         self.state = 'battle'
+        self.game.battle.setup_new_battle(self.game.player.monsters_in_party)
         self.reset_direction_states() # Prevents movement bugs
-        self.game.battle = battle.Battle(self.game.player.monsters_in_party)
 
     def exit_battle(self):
         self.state = 'world'
