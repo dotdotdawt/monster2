@@ -129,7 +129,8 @@ class Battle(object):
             return '%s has been obliterated by %s!' % (self.monster_x.name, self.monster_y.name)
 
         elif self.state == 'victory':
-            return 'You have defeated %s and earned %i gold!' % (self.monster_y.name, 20)
+            return 'You have defeated %s to earn %i gold and %i XP!' % (
+                self.monster_y.name, self.gold_reward, self.xp_reward)
 
         elif self.state == 'game_over':
             return 'Annihilated...'
@@ -196,6 +197,11 @@ class Battle(object):
         elif self.state == 'second_monster_dies':
             self.monster_y.sounds['death'].play()
             self.state = 'victory'
+            temp_xp = self.monster_x.xp
+            self.gold_reward = 0 # Need to be able to reference player
+            self.monster_x.xp += self.monster_y.get_xp_bounty()
+            self.xp_reward = self.monster_x.xp - temp_xp
+            
 
         # User loses game
         elif self.state == 'first_monster_dies':
@@ -204,6 +210,8 @@ class Battle(object):
 
         # Just exit in any case
         elif self.state == 'victory' or self.state == 'game_over':
+            self.monster_x.update_level()
+            self.monster_y.update_level()
             self.state = 'end'
 
     def decline(self):

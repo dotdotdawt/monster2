@@ -71,7 +71,7 @@ class SideMenu(object):
         x_loc = BASE_X_LOCATION - TEXT_EDGE_BUFFER + MENU_CUTOFF[0]
         y_loc = MENU_CUTOFF[1]
         self.bg_rect.topleft = (x_loc, y_loc)
-        self.bg_img.fill(TEXT_BG_FRIENDLY)
+        self.bg_img.fill(self.get_bg_color())
 
     def get_bg_color(self):
         if self.monster.owner == 'player':
@@ -101,8 +101,8 @@ class SideMenu(object):
         self.text_objects['name'].string = str(self.monster.name)
         self.text_objects['hp'].string = ' HP: %i/%i ' % (self.monster.hp, self.monster.base_hp)
         self.text_objects['level'].string = ' Level: %i ' % self.monster.level
-        self.text_objects['next_xp'].string = ' XP to next: %i ' % (self.monster.level-1)
-        self.text_objects['curr_xp'].string = ' Current XP: %i ' % 2003
+        self.text_objects['next_xp'].string = ' XP to next: %i ' % (self.monster.xp_to_next)
+        self.text_objects['curr_xp'].string = ' Current XP: %i ' % (self.monster.xp)
         self.text_objects['ph_atk'].string = ' Attack: %i ' % self.monster.ph_atk
         self.text_objects['ph_def'].string = ' Defense: %i ' % self.monster.ph_def
         self.text_objects['speed'].string = ' Speed: %i ' % self.monster.speed
